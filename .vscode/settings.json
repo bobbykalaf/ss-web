@@ -1,0 +1,10 @@
+{
+    "editor.codeLens": true,
+    "javascript.referencesCodeLens.enabled": false,
+    "typescript.implementationsCodeLens.enabled": false,
+    "typescript.referencesCodeLens.enabled": false,
+    "jest.enableCodeLens": false,
+    "eslint.workingDirectories": [
+        "c:\\Users\\bobby\\Desktop\\Projects\\smartspaces\\smartspaces\\"
+    ]
+}

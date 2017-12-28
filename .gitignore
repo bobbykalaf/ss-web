@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /src/assets/fonts
+/functions/node_modules
 
 # testing
 /coverage
