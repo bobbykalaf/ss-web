@@ -1,12 +1,11 @@
 [ignore]
 functions/node_modules
-node_modules/
 
 [include]
 src/
 
 [libs]
-flow-typed/
+flow-typed/npm
 
 [lints]
 

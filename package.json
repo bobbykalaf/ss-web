@@ -22,7 +22,16 @@
 		"eject": "react-scripts eject"
 	},
 	"devDependencies": {
+		"babel-eslint": "8.1.2",
 		"bootstrap": "4.0.0-beta.2",
+		"eslint": "4.14.0",
+		"eslint-plugin-flow-header": "0.2.0",
+		"eslint-plugin-flowtype": "^2.40.1",
+		"eslint-plugin-import": "2.8.0",
+		"eslint-plugin-jest": "21.5.0",
+		"eslint-plugin-jsx-a11y": "6.0.3",
+		"eslint-plugin-prettier": "2.4.0",
+		"eslint-plugin-react": "7.5.1",
 		"firebase": "4.8.1",
 		"firebase-admin": "5.6.0",
 		"firebase-tools": "3.16.0",
@@ -32,6 +41,10 @@
 		"jquery": "3.2.1",
 		"node-sass": "4.7.2",
 		"popper.js": "1.12.9",
-		"ss-common": "0.1.0"
+		"prettier": "1.9.2",
+		"redux-logger": "3.0.6",
+		"redux-thunk": "2.2.0",
+		"reselect": "^3.0.1",
+		"ss-common": "0.1.2"
 	}
 }

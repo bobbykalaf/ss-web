@@ -11,6 +11,7 @@ module.exports = {
 		'plugin:flowtype/recommended',
 		'plugin:import/recommended',
 		'plugin:jsx-a11y/recommended',
+		'plugin:flow-header/recommended',
 		'prettier',
 		'prettier/react',
 		'prettier/flowtype'
@@ -19,7 +20,7 @@ module.exports = {
 		sourceType: 'module'
 	},
 	parser: 'babel-eslint',
-	plugins: [ 'react', 'prettier', 'flowtype', 'import', 'jsx-a11y', 'jest' ],
+	plugins: [ 'react', 'prettier', 'flowtype', 'import', 'jsx-a11y', 'jest', 'flow-header' ],
 	rules: {
 		'linebreak-style': [ 'error', 'windows' ],
 		quotes: [ 'error', 'single' ],
@@ -90,7 +91,6 @@ module.exports = {
 		'lines-between-class-members': [ 2, 'always', { exceptAfterSingleLine: true } ],
 		'max-depth': [ 1, 4 ],
 		'multiline-ternary': [ 2, 'always' ],
-		'new-cap': [2, 'always' ],
 		'new-parens': [ 2 ],
 		'newline-per-chained-call': [ 2 ],
 		'no-array-constructor': [ 2 ],

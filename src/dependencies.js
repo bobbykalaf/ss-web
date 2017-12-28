@@ -1,6 +1,9 @@
 // @flow
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CurrentUser, AuthError } from './authentication/types';
+import { actionCreators, IAuthActionCreators } from './authentication/actions';
+import { bindActionCreators } from 'redux';
+import { dispatch } from './store';
 
 const firebaseAPIKey = "AIzaSyDITYME6eu54hUEwdg113HDxCXqZu6mJMo";
 const firebaseProjectID = "smartspaces-c3f3b"
@@ -46,9 +49,12 @@ function onAuthError(err: AuthError): void {
   actionCreator.createAction(err);
 }
 
-var promise = new Promise(auth.onAuthStateChanged);
+var promise = auth.onAuthStateChanged()
 var currentUserChange = Observable.fromPromise(promise).do(actionCreator.createAction);
 
 const appToSubjectSubscription = subject.subscribe(onAuthChanged, onAuthError, authSubscription);
 subject.switch
 const getCurrentUser = () => auth.currentUser;
+
+export const boundActionCreators: IAuthActionCreators = bindActionCreators(actionCrators, dispatch);
+boundActionCreators.
