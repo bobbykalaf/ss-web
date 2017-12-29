@@ -1,0 +1,19 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    
+    "version": "0.1.0",
+    "windows": {
+        "command": ".\\node_modules\\.bin\\eslint"
+    },
+    "linux": {
+        "command": "./node_modules/.bin/eslint"
+    },
+    "osx": {
+        "command": "./node_modules/.bin/eslint"
+    },
+    "isShellCommand": true,
+    "args": ["./src/**/*.js"],
+    "showOutput": "silent",
+    "problemMatcher": "$eslint-stylish"
+}

@@ -1,7 +1,6 @@
 // @flow
-
+import { Error as Exception, User, UserInfo } from 'firebase';
 import { Observable } from 'rxjs';
-import { User, UserInfo, Error as Exception } from 'firebase';
 
 export type AuthStage = 'anonymous' | 'fetching-login' | 'authenticated' | 'faulted' | 'fetching-logout';
 export type AuthContext = 'login' | 'logout';

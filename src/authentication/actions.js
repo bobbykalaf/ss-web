@@ -1,147 +1,152 @@
 // @flow
 import {
-    type FirebaseUser,
-    type FirebaseError,
-    type IAuthSelectors,
-    IAction,
-    IAuthActionCreators,
-    IAuthState,
-    IErrorMeta,
     type AuthContext,
     AuthErrorWithContextConstructor,
+    type FirebaseError,
+    type FirebaseUser,
+    IAction,
+    IAuthActionCreators,
+    type IAuthSelectors,
+    IAuthState,
     IdleFetchConstructor,
+    IErrorMeta,
     IErrorMetaConstructor,
     InProgressFetchConstructor
 } from './types';
 
-import { createSelector } from 'reselect';
 import { createActions, handleActions } from 'redux-actions';
+import { createSelector } from 'reselect';
 import firebase from '@firebase/app';
 import { Observable } from 'rxjs';
 
 export const AUTH_ACTIONS = {
-        AUTH_CURRENT_USER_CHANGE: 'AUTH/CURRENTUSER/CHANGE'
-        , AUTH_LOGIN_PREPARE: 'AUTH/LOGIN/PREPARE'
-        , AUTH_LOGIN_BEGIN: 'AUTH/LOGIN/BEGIN'
-        , AUTH_LOGOUT_BEGIN: 'AUTH/LOGOUT/BEGIN'
-        , AUTH_ERROR_RECEIVED: 'AUTH/ERROR/RECEIVED'
-        , AUTH_ERROR_CLEAR: 'AUTH/ERROR/CLEAR'
-    }
-    , selectors: () => IAuthSelectors = () => {
-        var selectCurrentUser = (state) => state.currentUser
-            , selectFetchingStatus = (state) => state.isFetching
-            , selectAuthErrorList = (state) => state.errorsList;
-        // eslint-disable-next-line one-var
-        var queryIsAuthenticated = createSelector(selectCurrentUser, (user) => user != null)
-            , queryIsFetchInProgress = createSelector(selectFetchingStatus, (status) => status.inProgress)
-            , queryIsLoginFetchInProgress = createSelector(selectFetchingStatus,
-                (isFetch) => isFetch.inProgress ?
-                    isFetch.payload.kind === 'login' :
-                    false)
-            , queryIsLogoutFetchInProgress = createSelector(selectFetchingStatus,
-                (isFetch) => isFetch.inProgress ?
-                    isFetch.payload.kind === 'logout' :
-                    false)
-            , queryFetchingObservable = createSelector(selectFetchingStatus,
-                (isFetch) => isFetch.inProgress ?
-                    isFetch.payload.observable :
-                    undefined)
-            , queryIsCurrentFaulted = createSelector(selectAuthErrorList, (list) => list.length > 0) // eslint-disable-line no-magic-numbers
-            , queryFirstError = createSelector(selectAuthErrorList,
-                (list) => `Error code: ${list[0].firebaseError.code}. Message: ${list[0].firebaseError.message}`) // eslint-disable-line no-magic-numbers
-            , queryLoginStage = createSelector(queryIsAuthenticated,
-                queryIsLoginFetchInProgress,
-                queryIsLogoutFetchInProgress,
-                queryIsCurrentFaulted,
-                (auth: boolean, login: boolean, logout: boolean, error: boolean) => {
-                    if (auth) {
-                        return 'authenticated';
-                    }
-                    if (login) {
-                        return 'fetching-login';
-                    }
-                    if (logout) {
-                        return 'fetching-logout';
-                    }
-                    if (error) {
-                        return 'faulted';
-                    }
-                    return 'anonymous';
-                });
-        return {
-            selectCurrentUser
-            , selectFetchingStatus
-            , selectAuthErrorList
-            , queryIsAuthenticated
-            , queryIsFetchInProgress
-            , queryIsLoginFetchInProgress
-            , queryIsLogoutFetchInProgress
-            , queryFetchingObservable
-            , queryIsCurrentFaulted
-            , queryFirstError
-            , queryLoginStage
-        };
-    }
-    , actionCreators: IAuthActionCreators = createActions({
-        AUTH: {
-            CURRENTUSER: { CHANGE: (user: FirebaseUser) => user }
-            , LOGIN: {
-                PREPARE: (emailAddress: string, password: string) => ({ emailAddress, password })
-                , BEGIN: (observable: Observable<any>) => ({ observable })
-            }
-            , LOGOUT: { BEGIN: () => ({}) }
-            , ERROR: {
-                RECEIVED: [
-                    (exception: FirebaseError) => exception
-                    , (exception: FirebaseError, context: AuthContext, functionName: string) => IErrorMetaConstructor(context, functionName)
-                ]
-                , CLEAR: (index: number) => ({ index })
-            }
-        }
-    })
-    , initialState: IAuthState = {
-        currentUser: null
-        , errorsList: []
-        , isFetching: IdleFetchConstructor()
-    }
-    , reducer = handleActions({
-        [AUTH_ACTIONS.AUTH_CURRENT_USER_CHANGE]: (state: IAuthState,
-            action: IAction<FirebaseUser, *>): IAuthState => ({
-            ...state
-            , currentUser: action.payload
-        })
-        , [AUTH_ACTIONS.AUTH_LOGIN_BEGIN]: (state: IAuthState, action: IAction<Observable<any>, *>): IAuthState => ({
-            ...state
-            , isFetching: InProgressFetchConstructor('login', action.payload)
-        })
-        // eslint-disable-next-line no-unused-vars
-        , [AUTH_ACTIONS.AUTH_LOGOUT_BEGIN]: (state: IAuthState, action: IAction<*, *>): IAuthState => ({
-            ...state
-            , isFetching: InProgressFetchConstructor('logout', undefined)
-        })
-        // eslint-disable-next-line no-unused-vars
-        , [AUTH_ACTIONS.AUTH_LOGIN_PREPARE]: (state, action) => state
-        , [AUTH_ACTIONS.AUTH_ERROR_RECEIVED]: (state: IAuthState,
-            action: IAction<FirebaseError, IErrorMeta>): IAuthState => ({
-            ...state
-            , errorsList: [
-                ...state.errorsList
-                , AuthErrorWithContextConstructor(action.payload, action.meta)
-            ]
-        })
-        , [AUTH_ACTIONS.AUTH_ERROR_CLEAR]: (state: IAuthState, action: IAction<number>): IAuthState => ({
-            ...state
-            , errorsList: state.errorsList.filter((v, ix) => ix !== action.payload)
-        })
-    },
-    initialState)
-    , Authentication = {
-        actions: AUTH_ACTIONS
-        , actionCreators: actionCreators
-        , selectors: selectors()
-        , initialState
-        , reducer
+    AUTH_CURRENT_USER_CHANGE: 'AUTH/CURRENTUSER/CHANGE'
+    , AUTH_ERROR_CLEAR: 'AUTH/ERROR/CLEAR'
+    , AUTH_ERROR_RECEIVED: 'AUTH/ERROR/RECEIVED'
+    , AUTH_LOGIN_BEGIN: 'AUTH/LOGIN/BEGIN'
+    , AUTH_LOGIN_PREPARE: 'AUTH/LOGIN/PREPARE'
+    , AUTH_LOGOUT_BEGIN: 'AUTH/LOGOUT/BEGIN'
+};
+
+const selectors: () => IAuthSelectors = () => {
+    const selectAuthErrorList = (state) => state.errorsList;
+    const selectCurrentUser = (state) => state.currentUser;
+    const selectFetchingStatus = (state) => state.isFetching;
+
+    // eslint-disable-next-line one-var
+    var queryFetchingObservable = createSelector(selectFetchingStatus,
+            (isFetch) => isFetch.inProgress ?
+                isFetch.payload.observable :
+                undefined)
+        , queryFirstError = createSelector(selectAuthErrorList,
+            (list) => `Error code: ${list[0].firebaseError.code}. Message: ${list[0].firebaseError.message}`) // eslint-disable-line no-magic-numbers
+        , queryIsAuthenticated = createSelector(selectCurrentUser, (user) => user != null)
+        , queryIsCurrentFaulted = createSelector(selectAuthErrorList, (list) => list.length > 0) // eslint-disable-line no-magic-numbers
+        , queryIsFetchInProgress = createSelector(selectFetchingStatus, (status) => status.inProgress)
+        , queryIsLoginFetchInProgress = createSelector(selectFetchingStatus,
+            (isFetch) => isFetch.inProgress ?
+                isFetch.payload.kind === 'login' :
+                false)
+        , queryIsLogoutFetchInProgress = createSelector(selectFetchingStatus,
+            (isFetch) => isFetch.inProgress ?
+                isFetch.payload.kind === 'logout' :
+                false)
+        , queryLoginStage = createSelector(queryIsAuthenticated,
+            queryIsLoginFetchInProgress,
+            queryIsLogoutFetchInProgress,
+            queryIsCurrentFaulted,
+            (auth: boolean, login: boolean, logout: boolean, error: boolean) => {
+                if (auth) {
+                    return 'authenticated';
+                }
+                if (login) {
+                    return 'fetching-login';
+                }
+                if (logout) {
+                    return 'fetching-logout';
+                }
+                if (error) {
+                    return 'faulted';
+                }
+                return 'anonymous';
+            });
+    return {
+        queryFetchingObservable
+        , queryFirstError
+        , queryIsAuthenticated
+        , queryIsCurrentFaulted
+        , queryIsFetchInProgress
+        , queryIsLoginFetchInProgress
+        , queryIsLogoutFetchInProgress
+        , queryLoginStage
+        , selectAuthErrorList
+        , selectCurrentUser
+        , selectFetchingStatus
     };
+};
+const actionCreators = createActions({
+    AUTH: {
+        CURRENTUSER: { CHANGE: (user: FirebaseUser) => user }
+        , ERROR: {
+            CLEAR: (index: number) => ({ index })
+            , RECEIVED: [
+                (exception: FirebaseError) => exception
+                , (exception: FirebaseError, context: AuthContext, functionName: string) => IErrorMetaConstructor(context, functionName)
+            ]
+        }
+        , LOGIN: {
+            BEGIN: (observable: Observable<any>) => ({ observable })
+            , PREPARE: (emailAddress: string, password: string) => ({ emailAddress, password })
+        }
+        , LOGOUT: { BEGIN: () => ({}) }
+
+    }
+});
+export const actionCreators2: IAuthActionCreators = actionCreators;
+const initialState: IAuthState = {
+    currentUser: null
+    , errorsList: []
+    , isFetching: IdleFetchConstructor()
+};
+const reducer = handleActions({
+    [AUTH_ACTIONS.AUTH_CURRENT_USER_CHANGE]: (state: IAuthState,
+        action: IAction<FirebaseUser, *>): IAuthState => ({
+        ...state
+        , currentUser: action.payload
+    })
+    , [AUTH_ACTIONS.AUTH_LOGIN_BEGIN]: (state: IAuthState, action: IAction<Observable<any>, *>): IAuthState => ({
+        ...state
+        , isFetching: InProgressFetchConstructor('login', action.payload)
+    })
+    // eslint-disable-next-line no-unused-vars
+    , [AUTH_ACTIONS.AUTH_LOGOUT_BEGIN]: (state: IAuthState, action: IAction<*, *>): IAuthState => ({
+        ...state
+        , isFetching: InProgressFetchConstructor('logout', undefined)
+    })
+    // eslint-disable-next-line no-unused-vars
+    , [AUTH_ACTIONS.AUTH_LOGIN_PREPARE]: (state, action) => state
+    , [AUTH_ACTIONS.AUTH_ERROR_RECEIVED]: (state: IAuthState,
+        action: IAction<FirebaseError, IErrorMeta>): IAuthState => ({
+        ...state
+        , errorsList: [
+            ...state.errorsList
+            , AuthErrorWithContextConstructor(action.payload, action.meta)
+        ]
+    })
+    , [AUTH_ACTIONS.AUTH_ERROR_CLEAR]: (state: IAuthState, action: IAction<number>): IAuthState => ({
+        ...state
+        , errorsList: state.errorsList.filter((v, ix) => ix !== action.payload)
+    })
+},
+initialState);
+export const Authentication = {
+    actionCreators
+    , actionCreators2
+    , actions: AUTH_ACTIONS
+    , initialState
+    , reducer
+    , selectors: selectors()
+};
 
 export interface IReduxAuth {
     actions: { [key: string]: string },
@@ -151,6 +156,7 @@ export interface IReduxAuth {
     reducer: (state: IAuthState, action) => IAuthState
 }
 
+console.log(`Auth: ${Authentication}`); // eslint-disable-line no-console
 export default Authentication;
 
 export interface ReduxSummary<TState> {

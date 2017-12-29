@@ -6,5 +6,6 @@
     "jest.enableCodeLens": false,
     "eslint.workingDirectories": [
         "c:\\Users\\bobby\\Desktop\\Projects\\smartspaces\\smartspaces\\"
-    ]
+    ],
+    "eslint.enable": true
 }

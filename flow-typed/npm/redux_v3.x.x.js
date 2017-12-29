@@ -1,8 +1,8 @@
+// @flow
 // flow-typed signature: 2ea4dc8d44d64d5c044be4bc31ad1a9d
-// flow-typed version: 2c04631d20/redux_v3.x.x/flow_>=v0.55.x
+// flow-typed version: 2c04631d20/redux_v3.7.x/flow_>=v0.55.x
 
 declare module 'redux' {
-
   /*
 
     S = State
