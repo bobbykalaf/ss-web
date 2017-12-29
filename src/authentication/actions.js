@@ -9,7 +9,7 @@ import {
     IErrorMeta,
     type AuthContext,
     AuthErrorWithContextConstructor,
-    FetchIdleConstructor,
+    IdleFetchConstructor,
     IErrorMetaConstructor,
     InProgressFetchConstructor
 } from './types';
@@ -102,7 +102,7 @@ export const AUTH_ACTIONS = {
     , initialState: IAuthState = {
         currentUser: null
         , errorsList: []
-        , isFetching: FetchIdleConstructor()
+        , isFetching: IdleFetchConstructor()
     }
     , reducer = handleActions({
         [AUTH_ACTIONS.AUTH_CURRENT_USER_CHANGE]: (state: IAuthState,

@@ -1,27 +1,31 @@
 // @flow
-import { BehaviorSubject, Observable } from 'rxjs';
-import { CurrentUser, AuthError } from './authentication/types';
-import { actionCreators, IAuthActionCreators } from './authentication/actions';
-import { bindActionCreators } from 'redux';
-import { dispatch } from './store';
+import { Observable } from 'rxjs';
+import { type FirebaseUser, type FirebaseError } from './authentication/types';
+import { authBoundCreators } from './store';
 
-const firebaseAPIKey = "AIzaSyDITYME6eu54hUEwdg113HDxCXqZu6mJMo";
-const firebaseProjectID = "smartspaces-c3f3b"
-const firebaseSenderID = "507335541139";
-
-const authDomain = `${firebaseProjectID}.firebaseapp.com`;
-const databaseURL = `https://${firebaseProjectID}.firebaseio.com`;
-const storageBucket = `${firebaseProjectID}.appspot.com`;
-
+const DEBUG = true
+    , log = (msg: string) => DEBUG && console.log(msg) // eslint-disable-line no-console
+    , firebaseAPIKey = 'AIzaSyDITYME6eu54hUEwdg113HDxCXqZu6mJMo'
+    , firebaseProjectID = 'smartspaces-c3f3b'
+    , firebaseSenderID = '507335541139'
+    , authDomain = `${firebaseProjectID}.firebaseapp.com`
+    , databaseURL = `https://${firebaseProjectID}.firebaseio.com`
+    , storageBucket = `${firebaseProjectID}.appspot.com`;
 // Font Awesome
-import './assets/fonts/svg-with-js/js/fontawesome-all.js';
+log('Loading: Font Awesome');
+import './assets/fonts/svg-with-js/js/fontawesome-all.js'; // eslint-disable-line import/first
 
 // Bootstrap
-import * as sass from "./assets/sass/styles.scss";
+log('Loading: Bootstrap sass');
+import './assets/sass/styles.scss'; // eslint-disable-line import/first
 
 // Firebase
-import firebase from '@firebase/app';
-import '@firebase/auth';
+log('Loading: Firebase');
+import firebase from '@firebase/app'; // eslint-disable-line import/first
+import '@firebase/auth'; // eslint-disable-line import/first
+import '@firebase/firestore'; // eslint-disable-line import/first
+
+log('Imported requirements');
 
 // import * as DB from 'firebase/database';
 // import * as Firestore from 'firebase/firestore';
@@ -29,32 +33,43 @@ import '@firebase/auth';
 // import * as Storage from 'firebase/storeage';
 
 var config = {
-    apiKey: "AIzaSyDITYME6eu54hUEwdg113HDxCXqZu6mJMo",
-    authDomain: "smartspaces-c3f3b.firebaseapp.com",
-    databaseURL: "https://smartspaces-c3f3b.firebaseio.com",
-    projectId: "smartspaces-c3f3b",
-    storageBucket: "smartspaces-c3f3b.appspot.com",
-    messagingSenderId: "507335541139"
-  };
-firebase.initializeApp(config);
+        apiKey: firebaseAPIKey
+        , authDomain: authDomain
+        , databaseURL: databaseURL
+        , projectId: firebaseProjectID
+        , storageBucket: storageBucket
+        , messagingSenderId: firebaseSenderID
+    }
+    , app = firebase.initializeApp(config);
 
-var auth: FirebaseAuth = firebase.auth();
-var subject: BehaviorSubject<CurrentUser> = new BehaviorSubject(auth.currentUser);
-var authSubscription = auth.onAuthStateChanged(subject.asObservable())
+log('initializing');
 
-function onAuthChanged(user: CurrentUser): void {
-  actionCreator.createAction(user);
+type AuthChangedEvent = (
+    nextOrObserver: (a: FirebaseUser | null) => void,
+    error?: (a: FirebaseError) => void,
+    completed?: Unsubscribe
+) => Unsubscribe;
+
+log('auth bridge');
+
+export class AuthBridge {
+    observable: Observable<FirebaseUser>;
+    dispose: () => void;
+    constructor(authEvent: AuthChangedEvent) {
+        log('AuthBridge ctor');
+        var promise = new Promise() < FirebaseUser > ((res, rej) => authEvent(res, (error) => rej(error)));
+        log('promised...');
+        this.observable = Observable.fromPromise(promise);
+        // eslint-disable-next-line one-var
+        var token = this.observable.subscribe(authBoundCreators.auth.currentuser.change,
+            (err) => authBoundCreators.auth.error.received(err, 'login', 'subscribe'),
+            () => this.dispose());
+        log(`token: ${token}`);
+        this.dispose = token.unsubscribe;
+    }
+
+    loginWithEmail = app.auth().signInWithEmailAndPassword;
+    logout = app.auth().signOut;
 }
-function onAuthError(err: AuthError): void {
-  actionCreator.createAction(err);
-}
-
-var promise = auth.onAuthStateChanged()
-var currentUserChange = Observable.fromPromise(promise).do(actionCreator.createAction);
-
-const appToSubjectSubscription = subject.subscribe(onAuthChanged, onAuthError, authSubscription);
-subject.switch
-const getCurrentUser = () => auth.currentUser;
-
-export const boundActionCreators: IAuthActionCreators = bindActionCreators(actionCrators, dispatch);
-boundActionCreators.
+// eslint-disable-next-line one-var
+export const Bridge = new AuthBridge(app.auth().onAuthStateChanged);
