@@ -12,16 +12,13 @@ import thunk from 'redux-thunk';
 
 // eslint-disable-next-line import/no-named-as-default-member
 const { actionCreators: authActionCreators, initialState: authInitialState, reducer: authReducer } = Authentication;
-const logger = createLogger();
-const applicationStore: Store<IAuthState> = createStore(authReducer, authInitialState, applyMiddleware(logger, thunk));
+const reduxLogger = createLogger();
+const applicationStore: Store<IAuthState> = createStore(authReducer, authInitialState, applyMiddleware(reduxLogger, thunk));
 
 export const subscribe$ = Observable.fromEventPattern((listener) => applicationStore.subscribe(listener));
 
-// console.log(JSON.stringify(bindActionCreators(authActionCreators, store.dispatch))); //eslint-disable-line no-console
-// console.log(JSON.stringify(Object.keys(bindActionCreators(authActionCreators, store.dispatch)))); //eslint-disable-line no-console
-// console.log(JSON.stringify(bindActionCreators(authActionCreators, store.dispatch).auth)); //eslint-disable-line no-console
-// console.log(JSON.stringify(bindActionCreators(authActionCreators, store.dispatch).auth.currentuser)); //eslint-disable-line no-console
-// console.log(JSON.stringify(bindActionCreators(authActionCreators, store.dispatch).auth.currentuser.change(null))); //eslint-disable-line no-console
-
-export const authBoundCreators = bindActionCreators(authActionCreators, applicationStore.dispatch);
+export const authBoundCreators = {
+    changed: bindActionCreators(authActionCreators.auth.currentuser.change, applicationStore.dispatch)
+    , error: bindActionCreators(authActionCreators.auth.error.received, applicationStore.dispatch)
+};
 log(`bound: ${JSON.stringify(authBoundCreators)}`);

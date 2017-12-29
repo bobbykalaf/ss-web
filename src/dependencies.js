@@ -21,16 +21,12 @@ import './assets/sass/styles.scss'; // eslint-disable-line import/first
 
 // Firebase
 log('Loading: Firebase');
-import firebase from 'firebase/app'; // eslint-disable-line
-import 'firebase/auth'; // eslint-disable-line import/first
-import 'firebase/firestore'; // eslint-disable-line import/first
-
-log('Imported requirements');
-
-// import * as DB from 'firebase/database';
-// import * as Firestore from 'firebase/firestore';
-// import * as Messaging from 'firebase/messaging';
-// import * as Storage from 'firebase/storeage';
+import * as firebase from 'firebase'; // eslint-disable-line
+require('firebase/auth'); // eslint-disable-line import/first
+require('firebase/firestore'); // eslint-disable-line import/first
+require('firebase/database');
+require('firebase/messageing');
+require('firebase/storage');
 
 const config = {
     apiKey: firebaseAPIKey
@@ -40,8 +36,7 @@ const config = {
     , projectId: firebaseProjectID
     , storageBucket
 };
-var app = firebase.initializeApp(config);
-
+firebase.initializeApp(config);
 log('initializing');
 
 export class AuthBridge {
@@ -50,10 +45,11 @@ export class AuthBridge {
     loginWithEmail: (email, password) => Promise<any>;
     logout: () => Promise<any>;
     constructor(authEvent: any) {
+        const temp = firebase.auth().onAuthStateChanged;
         log('AuthBridge ctor');
         console.log(authEvent.name); // eslint-disable-line no-console
-        var subject = new BehaviorSubject(app.auth().currentUser);
-        authEvent((user: FirebaseUser) => subject.next(user), (err: FirebaseError) => subject.error(err));
+        var subject = new BehaviorSubject(firebase.auth().currentUser);
+        temp((user: FirebaseUser) => subject.next(user), (err: FirebaseError) => subject.error(err));
 
         log('promised...');
         this.observable = subject.asObservable();
@@ -63,9 +59,9 @@ export class AuthBridge {
             () => this.dispose());
         log(`token: ${token}`);
         this.dispose = token.unsubscribe;
-        this.loginWithEmail = app.auth().signInWithEmailAndPassword;
-        this.logout = app.auth().signOut;
+        this.loginWithEmail = firebase.auth().signInWithEmailAndPassword;
+        this.logout = firebase.auth().signOut;
     }
 }
 // eslint-disable-next-line one-var
-export const Bridge = new AuthBridge(app.auth().onAuthStateChanged);
+export const Bridge = new AuthBridge(firebase.auth().onAuthStateChanged);

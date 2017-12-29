@@ -56,6 +56,7 @@ declare module 'ss-common/src/index' {
 }
 
 declare module 'ss-common/src/list/index' {
+	declare type Nullable<T> = T | void;
   declare function filterNullEmpty(list: Nullable<string>[]): string[];
 	declare module.exports: any;
 }
