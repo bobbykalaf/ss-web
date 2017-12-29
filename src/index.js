@@ -1,4 +1,11 @@
 // @flow
+/* eslint-disable sort-imports */
+export const DEBUG = true;
+export function log(msg: string) {
+    if (DEBUG) {
+        console.log(msg); // eslint-disable-line no-console
+    }
+}
 import './dependencies';
 import React from 'react';
 import ReactDOM from 'react-dom';

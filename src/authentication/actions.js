@@ -40,7 +40,7 @@ const selectors: () => IAuthSelectors = () => {
                 undefined)
         , queryFirstError = createSelector(selectAuthErrorList,
             (list) => `Error code: ${list[0].firebaseError.code}. Message: ${list[0].firebaseError.message}`) // eslint-disable-line no-magic-numbers
-        , queryIsAuthenticated = createSelector(selectCurrentUser, (user) => user != null)
+        , queryIsAuthenticated = createSelector(selectCurrentUser, (user) => user !== null)
         , queryIsCurrentFaulted = createSelector(selectAuthErrorList, (list) => list.length > 0) // eslint-disable-line no-magic-numbers
         , queryIsFetchInProgress = createSelector(selectFetchingStatus, (status) => status.inProgress)
         , queryIsLoginFetchInProgress = createSelector(selectFetchingStatus,
@@ -86,12 +86,15 @@ const selectors: () => IAuthSelectors = () => {
 };
 const actionCreators = createActions({
     AUTH: {
-        CURRENTUSER: { CHANGE: (user: FirebaseUser) => user }
+        CURRENTUSER: {
+            CHANGE: (user: FirebaseUser) => ({ user })
+        }
         , ERROR: {
             CLEAR: (index: number) => ({ index })
             , RECEIVED: [
                 (exception: FirebaseError) => exception
-                , (exception: FirebaseError, context: AuthContext, functionName: string) => IErrorMetaConstructor(context, functionName)
+                , (exception: FirebaseError, context: AuthContext, functionName: string) =>
+                    IErrorMetaConstructor(context, functionName)
             ]
         }
         , LOGIN: {
@@ -99,18 +102,16 @@ const actionCreators = createActions({
             , PREPARE: (emailAddress: string, password: string) => ({ emailAddress, password })
         }
         , LOGOUT: { BEGIN: () => ({}) }
-
     }
 });
-export const actionCreators2: IAuthActionCreators = actionCreators;
+
 const initialState: IAuthState = {
     currentUser: null
     , errorsList: []
     , isFetching: IdleFetchConstructor()
 };
 const reducer = handleActions({
-    [AUTH_ACTIONS.AUTH_CURRENT_USER_CHANGE]: (state: IAuthState,
-        action: IAction<FirebaseUser, *>): IAuthState => ({
+    [AUTH_ACTIONS.AUTH_CURRENT_USER_CHANGE]: (state: IAuthState, action: IAction<FirebaseUser, *>): IAuthState => ({
         ...state
         , currentUser: action.payload
     })
@@ -139,9 +140,9 @@ const reducer = handleActions({
     })
 },
 initialState);
+
 export const Authentication = {
     actionCreators
-    , actionCreators2
     , actions: AUTH_ACTIONS
     , initialState
     , reducer
@@ -149,14 +150,13 @@ export const Authentication = {
 };
 
 export interface IReduxAuth {
-    actions: { [key: string]: string },
-    actionCreators: IAuthActionCreators,
-    selectors: IAuthSelectors,
-    initialState: IAuthState,
-    reducer: (state: IAuthState, action) => IAuthState
+    actions: { [key: string]: string };
+    actionCreators: IAuthActionCreators;
+    selectors: IAuthSelectors;
+    initialState: IAuthState;
+    reducer: (state: IAuthState, action) => IAuthState;
 }
 
-console.log(`Auth: ${Authentication}`); // eslint-disable-line no-console
 export default Authentication;
 
 export interface ReduxSummary<TState> {

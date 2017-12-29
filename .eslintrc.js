@@ -83,7 +83,6 @@ module.exports = {
 		'consistent-this': [ 2, 'that' ],
 		'func-style': [ 2, 'declaration', { allowArrowFunctions: true }],
 		'function-paren-newline': [ 2, 'never' ],
-		'implicit-arrow-linebreak': [ 2, 'beside' ],
 		'jsx-quotes': [ 2, 'prefer-double' ],
 		'indent': [ 2,  4],
 		'func-call-spacing': [ 2, 'never' ],

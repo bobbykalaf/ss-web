@@ -2,6 +2,7 @@
 functions/node_modules
 node_modules
 assets/fonts 
+config/
 
 [include]
 src/
