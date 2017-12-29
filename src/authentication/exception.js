@@ -1,8 +1,8 @@
 // @flow
-import { AuthContext, Exception, Timestamp } from './types';
+import { AuthPhase, Exception, Timestamp } from './types';
 
 interface IExceptionContext {
-    context?: AuthContext,
+    authPhase?: AuthPhase,
     timestamp: Timestamp
 }
 export type AuthException<TError = Error> = {
@@ -10,16 +10,18 @@ export type AuthException<TError = Error> = {
     context?: IExceptionContext
 };
 
-function ExceptionContextConstructor(context: AuthContext): IExceptionContext {
-    return { context, timestamp: Date.now() };
+function ExceptionContextConstructor(authPhase: AuthPhase): IExceptionContext {
+    return { authPhase, timestamp: Date.now() };
 }
 
-function AuthExceptionConstructor(exception: Error, context?: AuthContext): AuthException {
+function AuthExceptionConstructor(exception: Error, authPhase?: AuthPhase): AuthException {
     return {
-        context: ExceptionContextConstructor(context)
+        context: ExceptionContextConstructor(authPhase)
         , exception
     };
 }
+
 export const LoginExceptionConstructor = (exception: Exception) => AuthExceptionConstructor(exception, 'login');
 export const LogoutExceptionConstructor = (exception: Exception) => AuthExceptionConstructor(exception, 'logout');
 export const UnknownContextConstructor = (exception: Exception) => AuthExceptionConstructor(exception);
+

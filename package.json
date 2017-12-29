@@ -91,6 +91,7 @@
 		"ss-common": "0.1.2"
 	},
 	"jest": {
+		"collectCoverage": true,
 		"collectCoverageFrom": [
 			"src/**/*.{js,jsx,mjs}"
 		],

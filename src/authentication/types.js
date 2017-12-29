@@ -2,7 +2,7 @@
 import { Error as Error$, User, UserInfo } from 'firebase';
 import { Observable } from 'rxjs';
 
-export type AuthContext = 'login' | 'logout';
+export type AuthPhase = 'login' | 'logout';
 export type Timestamp = number;
 type AuthStage = 'anonymous' | 'fetching-login' | 'authenticated' | 'faulted' | 'fetching-logout';
 
@@ -10,7 +10,7 @@ export type FirebaseUser = User | void;
 export type FirebaseUserInfo = UserInfo;
 export type Exception = Error$ | Error
 
-export type Action<TPayload = {}, TMeta = {}> {
+export type Action<TPayload = {}, TMeta = {}> =  {
     type: string,
     payload?: TPayload,
     error?: boolean,
