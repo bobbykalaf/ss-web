@@ -59,11 +59,15 @@
 	"scripts": {
 		"start": "node scripts/start.js",
 		"build": "node scripts/build.js",
-		"test": "node scripts/test.js --env=jsdom"
+		"test": "node scripts/test.js --env=jsdom",
+		"eslint": "eslint ./src/**/*.js -c .eslintrc.js --fix",
+		"coverage": "jest --coverage",
+		"flow": "flow"
 	},
 	"devDependencies": {
 		"babel-eslint": "8.1.2",
 		"babel-plugin-transform-object-rest-spread": "^6.26.0",
+		"babel-polyfill": "^6.26.0",
 		"bootstrap": "4.0.0-beta.2",
 		"eslint": "4.14.0",
 		"eslint-config-prettier": "^2.9.0",
@@ -88,13 +92,15 @@
 		"redux-logger": "3.0.6",
 		"redux-thunk": "2.2.0",
 		"reselect": "^3.0.1",
-		"ss-common": "0.1.2"
+		"ss-common": "^0.1.2"
 	},
 	"jest": {
 		"collectCoverage": true,
 		"collectCoverageFrom": [
-			"src/**/*.{js,jsx,mjs}"
+			"src/**/*.{js,jsx,mjs}",
+			"!**/fonts/**"
 		],
+		"coverageDirectory": "<rootDir>/coverage",
 		"setupFiles": [
 			"<rootDir>/config/polyfills.js"
 		],

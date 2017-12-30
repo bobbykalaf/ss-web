@@ -4,6 +4,8 @@
 /node_modules
 /src/assets/fonts
 /functions/node_modules
+/jest
+/vscode-jest
 
 # testing
 /coverage

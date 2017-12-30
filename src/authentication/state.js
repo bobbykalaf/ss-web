@@ -1,6 +1,6 @@
 // @flow
-import type { AuthPhase, FirebaseUser } from './types';
-import type { AuthException } from './exception';
+import { type AuthPhase, type FirebaseUser } from './types';
+import { type AuthException } from './../common/exception';
 import { Observable } from 'rxjs';
 
 type Idle = {};
@@ -17,19 +17,30 @@ function FetchingConstructor(context: AuthPhase, observable?: Observable<any>): 
         , observable
     };
 }
-export const idleFetchingStatus = IdleConstructor();
+export const idleFetchingStatus = IdleConstructor;
 export const loginFetchingStatus = (observable?: Observable<any>) => FetchingConstructor('login', observable);
 export const logoutFetchingStatus = (observable?: Observable<any>) => FetchingConstructor('logout', observable);
 
 type AuthStateShape = {
-    currentUser: FirebaseUser,
-    isFetching: FirebaseAuthStatus,
-    errorsList: AuthException[]
+    +currentUser: FirebaseUser,
+    +isFetching: FirebaseAuthStatus,
+    +errorsList: AuthException[]
 };
-export type AuthState = $ReadOnly<AuthStateShape>;
 
-export const initialState: AuthState = {
-    currentUser: null
-    , errorsList: []
-    , isFetching: idleFetchingStatus()
+opaque type AuthState = $ReadOnly<AuthStateShape>;
+export function AuthStateConstructor(currentUser: FirebaseUser,
+    errorsList: AuthException[],
+    isFetching: FirebaseAuthStatus): AuthStateShape {
+    return {
+        currentUser
+        , errorsList
+        , isFetching
+    };
+}
+
+export const initialState: AuthState = AuthStateConstructor(null, [], idleFetchingStatus());
+
+module.exports = {
+    AuthStateShape
+    , initialState
 };

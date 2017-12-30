@@ -1,10 +1,11 @@
 // @flow
 import { applyMiddleware, bindActionCreators, createStore } from 'redux';
 
+import { AuthState } from './authentication/state';
 // eslint-disable-next-line import/no-named-as-default
 import Authentication from './authentication/actions';
 import { createLogger } from 'redux-logger';
-import { IAuthState } from './authentication/types';
+
 import { log } from './index';
 import { Observable } from 'rxjs';
 import type { Store } from './redux/types';
