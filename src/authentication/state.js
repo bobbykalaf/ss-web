@@ -1,12 +1,7 @@
 // @flow
-import { type AuthPhase, type FirebaseUser } from './types';
+import { type AuthPhase, type User } from './types';
 import { type AuthException } from './../common/exception';
-import { Observable } from 'rxjs';
-
-type Idle = {};
-type Fetching = { context?: AuthContext, observable?: Observable<any> };
-
-type FirebaseAuthStatus = Idle | Fetching;
+import { Observable } from '@reactivex/rxjs';
 
 function IdleConstructor(): Idle {
     return {};
@@ -17,19 +12,18 @@ function FetchingConstructor(context: AuthPhase, observable?: Observable<any>): 
         , observable
     };
 }
-export const idleFetchingStatus = IdleConstructor;
-export const loginFetchingStatus = (observable?: Observable<any>) => FetchingConstructor('login', observable);
-export const logoutFetchingStatus = (observable?: Observable<any>) => FetchingConstructor('logout', observable);
+const idleFetchingStatus = IdleConstructor;
+const loginFetchingStatus = (observable?: Observable<any>) => FetchingConstructor('login', observable);
+const logoutFetchingStatus = (observable?: Observable<any>) => FetchingConstructor('logout', observable);
 
 type AuthStateShape = {
-    +currentUser: FirebaseUser,
+    +currentUser: User,
     +isFetching: FirebaseAuthStatus,
-    +errorsList: AuthException[]
-};
+    +errorsList: AuthException<*>[]
+}
 
-opaque type AuthState = $ReadOnly<AuthStateShape>;
-export function AuthStateConstructor(currentUser: FirebaseUser,
-    errorsList: AuthException[],
+function AuthStateConstructor(currentUser: User,
+    errorsList: AuthException<*>[],
     isFetching: FirebaseAuthStatus): AuthStateShape {
     return {
         currentUser
@@ -38,9 +32,12 @@ export function AuthStateConstructor(currentUser: FirebaseUser,
     };
 }
 
-export const initialState: AuthState = AuthStateConstructor(null, [], idleFetchingStatus());
+const initialState: AuthStateShape = AuthStateConstructor(null, [], idleFetchingStatus());
 
-module.exports = {
-    AuthStateShape
+var output = {
+    idleFetchingStatus
     , initialState
+    , loginFetchingStatus
+    , logoutFetchingStatus
 };
+export default output;

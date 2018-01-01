@@ -1,5 +1,5 @@
 // @flow
-import { AuthPhase, Exception, Timestamp } from './types';
+import { AuthPhase, Exception, Timestamp } from './../authentication/types';
 
 interface IExceptionContext {
     authPhase?: AuthPhase,

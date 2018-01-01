@@ -51,38 +51,8 @@ export const sizeMapping = (iconSize: IconSize): string | void => {
 };
 /* eslint-enable no-magic-numbers */
 
-export type MaterialColor =
-     'red'
-    | 'pink'
-    | 'purple'
-    | 'deep-purple'
-    | 'indigo'
-    | 'blue'
-    | 'light-blue'
-    | 'cyan'
-    | 'teal'
-    | 'green'
-    | 'lime'
-    | 'light-green'
-    | 'amber'
-    | 'yellow'
-    | 'orange'
-    | 'deep-orange'
-    | 'white'
-    | 'black'
-    | 'brown'
-    | 'blue-grey'
-    | 'grey';
 
-export interface ColorSet {
-    background?: MaterialColor,
-    foreground?: MaterialColor
-}
 
-export const colorMapping = (colors: ColorSet) => {
-    const styleText = [ colors.foreground && `color: ${capitalize(colors.foreground)}`, colors.background && `background: ${capitalize(colors.background)}` ];
-    return styleText.length > 1;
-};
 
 export const keyMapping: (key: IconKey) => string = (key: IconKey) => `fa-${key}`;
 

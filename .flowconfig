@@ -1,17 +1,16 @@
 [ignore]
 .*/functions/node_modules
-.*/node_modules
 .*/assets/fonts
-.*/config/
-.*/jest/
-.*/vscode-jest/
+.*/config
+.*/jest
+.*/vscode-jest
 .*/coverage/
 
 [include]
 .*/src/
 
 [libs]
-.*/flow-typed/**/*
+.*/flow-typed
 
 [lints]
 

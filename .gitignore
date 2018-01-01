@@ -6,6 +6,7 @@
 /functions/node_modules
 /jest
 /vscode-jest
+**/__snapshots__/**
 
 # testing
 /coverage

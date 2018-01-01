@@ -1,6 +1,7 @@
 // @flow
+import { AuthError } from './../common/exception';
 import { Error as firebase$error, User as firebase$User } from 'firebase';
-import { Observable } from 'rxjs';
+import { Observable } from '@reactivex/rxjs';
 
 export type AuthPhase = 'login' | 'logout';
 type AuthStage = 'anonymous' | 'fetching-login' | 'authenticated' | 'faulted' | 'fetching-logout';
@@ -8,7 +9,19 @@ type AuthStage = 'anonymous' | 'fetching-login' | 'authenticated' | 'faulted' | 
 export type User = firebase$User | void;
 export type Exception = firebase$error | Error;
 
-export type Action<TPayload = {}, TMeta = {}> =  {
+type Idle = {};
+type Fetching = { context?: AuthPhase, observable?: Observable<any> };
+
+type FirebaseAuthStatus = Idle | Fetching;
+
+type AuthStateShape = {
+    +currentUser: User,
+    +isFetching: FirebaseAuthStatus,
+    +errorsList: AuthException<*>[]
+}
+export opaque type AuthState = $ReadOnly<AuthStateShape>;
+
+export type Action<TPayload = {}, TMeta = {}> = {
     type: string,
     payload?: TPayload,
     error: boolean,

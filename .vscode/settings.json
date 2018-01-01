@@ -4,11 +4,7 @@
     "typescript.implementationsCodeLens.enabled": false,
     "typescript.referencesCodeLens.enabled": false,
     "jest.enableCodeLens": false,
-    "eslint.workingDirectories": [
-        "c:\\Users\\bobby\\Desktop\\Projects\\smartspaces\\smartspaces\\"
-    ],
-    "eslint.enable": true,
-    "workbench.colorTheme": "Monokai One Dark Vivid",
+    "workbench.colorTheme": "Readable Code Material Darker",
     "editor.fontFamily": "Fira Code, Medium",
     "editor.fontSize": 16,
     "editor.lineHeight": 25,
@@ -21,7 +17,7 @@
     // Very important: Install this plugin: https://github.com/be5invis/vscode-custom-css
     // you'll need to change this to an absolute path on your computer
     "vscode_custom_css.imports": [
-        "C:\\Users\\bobby\\Desktop\\cobalt2.css"
+        "file:///home/bobby/Desktop/Projects/ss/custom.css"
     ],
     "editor.renderWhitespace": "all"
 }

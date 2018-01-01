@@ -3,7 +3,7 @@ module.exports = {
 		browser: true,
 		es6: true,
 		node: true,
-		'jest/globals': true
+		jest: true
 	},
 	extends: [
 		'eslint:recommended',
@@ -44,7 +44,7 @@ module.exports = {
 		'no-empty-function': [ 'error' ],
 		'no-empty-pattern': ['error'],
 		'no-eval': [ 'error' ],
-		'no-eq-null': [ 'error' ],
+		'no-eq-null': [ 1 ],
 		'no-extra-bind': [ 'error' ],
 		'no-fallthrough': [ 'error' ],
 		'no-implicit-coercion': [ 'error' ],

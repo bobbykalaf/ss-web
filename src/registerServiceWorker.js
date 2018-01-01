@@ -1,6 +1,4 @@
-// @flow
-/* eslint-disable no-console */
-/* eslint-disable no-magic-numbers */
+/* eslint-disable no-console, flow-header/flow-header, no-magic-numbers */
 // In production, we register a service worker to serve assets from local cache.
 
 // This lets the app load faster on subsequent visits in production, and gives

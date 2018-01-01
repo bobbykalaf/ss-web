@@ -35,11 +35,8 @@ const actionCreators = createActions({
         }
         , ERROR: {
             CLEAR: (index: number) => ({ index })
-            , RECEIVED: [
-                (exception: FirebaseError) => exception
-                , (exception: FirebaseError, context: AuthContext, functionName: string) =>
-                    IErrorMetaConstructor(context, functionName)
-            ]
+            , RECEIVED: [ (exception: FirebaseError) => exception, (exception: FirebaseError, context: AuthContext, functionName: string) =>
+                IErrorMetaConstructor(context, functionName) ]
         }
         , LOGIN: {
             BEGIN: (observable: Observable<any>) => ({ observable })
@@ -68,10 +65,7 @@ const reducer = handleActions({
     , [AUTH_ACTIONS.AUTH_ERROR_RECEIVED]: (state: IAuthState,
         action: IAction<FirebaseError, IErrorMeta>): IAuthState => ({
         ...state
-        , errorsList: [
-            ...state.errorsList
-            , AuthErrorWithContextConstructor(action.payload, action.meta)
-        ]
+        , errorsList: [ ...state.errorsList, AuthErrorWithContextConstructor(action.payload, action.meta) ]
     })
     , [AUTH_ACTIONS.AUTH_ERROR_CLEAR]: (state: IAuthState, action: IAction<number>): IAuthState => ({
         ...state

@@ -1,4 +1,4 @@
-// flow-typed signature: 62a808d16947ed4b5b7ddc5771104488
+// flow-typed signature: fea082aa61a81ca321d98f27415fa109
 // flow-typed version: bead2dda6f/rxjs_v5.0.x/flow_>=v0.34.x
 
 // FIXME(samgoldman) Remove top-level interface once Babel supports
